@@ -1,0 +1,7 @@
+@include('template.encabezado1')
+@include('template.menu4')
+@yield('contenido_central')
+@yield('contenido_oculto')
+@yield('contenido_bancos')
+@yield('contenido_cta_bancarias')
+@include('template.pie')
