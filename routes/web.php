@@ -26,7 +26,7 @@ Route::group(['middleware' => 'web'], function(){
 	/*Lista productos vistacliente*/
 	Route::resource('vistas', 'vistas');
 
-	//Carrito 
+	//Carrito
 	Route::get('cart/show',[
 		'as' => 'cart-show',
 		'uses' =>'CartController@show'
@@ -38,7 +38,7 @@ Route::group(['middleware' => 'web'], function(){
 		'uses' =>'CartController@add'
 	]);
 
-	
+
 	Route::get('cart/delete/{productos}',[
 		'as'=> 'cart-delete',
 		'uses' =>'CartController@delete'
@@ -67,8 +67,9 @@ Route::group(['middleware' => 'web'], function(){
 });
 // FIN de middleware web
 
-
-
+//las compras
+Route::get('busqueda/{id}','MultiController@buscar');
+//fin compras
 
 /*
 	Este grupo tiene todas las url que necesitan tener logeo sin importar si son algún tipo de usuarip
@@ -95,7 +96,7 @@ Route::group(['middleware' => 'auth'], function(){
 
 
 
-/* 
+/*
 	Rutas accesibles sólo para el usuario administrador
 */
 Route::group(['middleware' => 'usuarioAdmin'], function(){

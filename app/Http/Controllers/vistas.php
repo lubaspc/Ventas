@@ -15,8 +15,8 @@ class vistas extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {    
-        
+    {
+
     }
 
     /**
@@ -26,7 +26,7 @@ class vistas extends Controller
      */
     public function create()
     {
-      
+
     }
 
     /**
@@ -52,8 +52,15 @@ class vistas extends Controller
         $categorias=productos::where('id_categorias',$id)
         ->join('categorias','productos.id_categorias','categorias.id')
         ->get();
-        //return $categorias;
+        if (count($categorias)>=1) {
+            return view('vistas.index')->with('productos',$categorias);
+        }else{
+
+        $categorias=productos::where('nombre_producto',$id)
+        ->join('categorias','productos.id_categorias','categorias.id')
+        ->get();
         return view('vistas.index')->with('productos',$categorias);
+        }
     }
 
     /**
