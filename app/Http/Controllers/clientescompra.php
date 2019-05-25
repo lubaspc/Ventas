@@ -44,20 +44,10 @@ class clientescompra extends Controller
     public function store(Request $r){
         $c=clientes::where('email',$r->email)->first();
         $ventas=new ventas();
-
         $cart=\Session::get('cart');
-        return $cart;
-        $total=0;
-        $cantidad=0;
-        $pcosto=0;
-        foreach($cart as $productos){
-            $cantidad+=$productos->cantidad;
-            $total+=$productos->precio_venta * $productos->cantidad;
-            $pcosto+=$productos->precio_costo;
-        }
-        $iva=$total*1.6;
+        $total=$this->total();
+        $iva=$total*0.16;
         $sub=$total-$iva;
-
         if(isset($c)){
             $ventas->id_clientes=$c->id;
         }else{
@@ -66,29 +56,33 @@ class clientescompra extends Controller
             $ventas->id_clientes=$client->id;
         }
             $ventas->folio_venta=3;
-            $ventas->fecha=date("Y-m-d");
+            $ventas->fecha_venta=date("Y-m-d");
             $ventas->subtotal=$sub;
             $ventas->iva=$iva;
             $ventas->total=$total;
             $ventas->estatus_venta=1;
             $ventas->id_pagos=$r->id_pago;
             $ventas->save();
-
-            $dv=new detalle_ventas();
-            $dv->id_ventas=$ventas->id;
-            $dv->cantidad=$cantidad;
-            $dv->precio_costo=$pcosto;
-            $dv->precio_venta=$total;
-            $dv->estatus_dtven=1;
-            $dv->id_procuctos=$id;
+            $ventas->folio_venta='VENTA'.$ventas->id;
+            $ventas->save();
+            foreach($cart as $p){
+                $dv=new detalle_ventas();
+                $dv->id_ventas=$ventas->id;
+                $dv->cantidad=$p->cantidad;
+                $dv->precio_costo=$p->precio_costo;
+                $dv->precio_venta=$p->precio_venta;
+                $dv->estatus_dtven=1;
+                $dv->id_productos=$p->id;
+                $dv->save();
+            }
+            return redirect('/clientescompra/'.$ventas->id);
     }
-}
+
 
     private function total(){
         $cart=\Session::get('cart');
         $total=0;
         foreach($cart as $productos){
-
             $total+=$productos->precio_venta * $productos->cantidad;
         }
         return $total;
@@ -101,7 +95,7 @@ class clientescompra extends Controller
      */
     public function show($id)
     {
-        //
+        $ventas=ventas::find($id);
     }
 
     /**
